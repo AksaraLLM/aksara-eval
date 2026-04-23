@@ -106,10 +106,11 @@ class AksaraAdapter:
         import torch
 
         ids = torch.tensor([self.tokenizer.encode(prompt)], dtype=torch.long, device=self.device)
-        out = self.model.generate(
-            ids, max_new_tokens=max_new_tokens, temperature=0.0,
-            eos_token_id=self.tokenizer.eos_token_id,
-        )
+        with torch.no_grad():
+            out = self.model.generate(
+                ids, max_new_tokens=max_new_tokens, temperature=0.0,
+                eos_token_id=self.tokenizer.eos_token_id,
+            )
         new_ids = out[0, ids.shape[1]:].tolist()
         return self.tokenizer.decode(new_ids, skip_special_tokens=True)
 
